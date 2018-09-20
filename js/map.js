@@ -7,18 +7,26 @@ var MAX_ROOMS = 5;
 var MIN_GUESTS = 1;
 var MAX_GUESTS = 20;
 var OBJECTS_COUNT = 8;
-var map = document.querySelector('.map');
-map.classList.remove('map--faded');
+
 var imageNumbers = ['1', '2', '3', '4', '5', '6', '7', '8'];
-var randomImageNumber = shuffleArray(imageNumbers);
-
 var titles = ['Большая уютная квартира', 'Маленькая неуютная квартира', 'Огромный прекрасный дворец', 'Маленький ужасный дворец', 'Красивый гостевой домик', 'Некрасивый негостеприимный домик', 'Уютное бунгало далеко от моря', 'Неуютное бунгало по колено в воде'];
-var randomTitles = shuffleArray(titles);
-
 var types = ['palace', 'flat', 'house', 'bungalo'];
 var features = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
 var times = ['12:00', '13:00', '14:00'];
 var photos = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
+
+var map = document.querySelector('.map');
+var mapPin = document.querySelector('.map__pins');
+
+var mapsWidth = map.offsetWidth;
+
+var pinTpl = document.querySelector('#pin').content.querySelector('.map__pin');
+var cardTpl = document.querySelector('#card').content.querySelector('.map__card');
+
+var randomTitles = shuffleArray(titles);
+var randomImageNumber = shuffleArray(imageNumbers);
+var apartments = [];
+
 var getRandomValue = function (arr) {
   return arr[Math.floor((Math.random() * arr.length))];
 };
@@ -50,11 +58,7 @@ var getTypeValue = function () {
       return 'Дом';
   }
 };
-var mapsWidth = map.offsetWidth;
-var zoneCard = map.querySelector('.map__filters-container');
-var mapPin = document.querySelector('.map__pins');
-var pin = document.querySelector('#pin').content.querySelector('.map__pin');
-var apartments = [];
+
 var getSingleApartment = function (index) {
   var posX = getRandomInt(0, mapsWidth);
   var posY = getRandomInt(130, 630);
@@ -82,34 +86,25 @@ var getSingleApartment = function (index) {
     }
   };
 };
-var getAllApartments = function () {
-  for (var i = 0; i < OBJECTS_COUNT; i++) {
-    apartments.push(getSingleApartment(i));
-  }
-  return apartments;
-};
-var getSingleMapPin = function (apart) {
-  var pinElement = pin.cloneNode(true);
-  pinElement.style = 'left:' + apart.location.x + 'px; top:' + apart.location.y + 'px;';
-  pinElement.querySelector('img').src = apart.autor.avatar;
-  pinElement.querySelector('img').alt = apart.offer.title;
+
+var getSingleMapPin = function (apartItem) {
+  var pinElement = pinTpl.cloneNode(true);
+  pinElement.style = 'left:' + apartItem.location.x + 'px; top:' + apartItem.location.y + 'px;';
+  pinElement.querySelector('img').src = apartItem.autor.avatar;
+  pinElement.querySelector('img').alt = apartItem.offer.title;
   return pinElement;
 };
-var getAllMapPins = function () {
+var getAllMapPins = function (objects) {
   var fragment = document.createDocumentFragment();
-  for (var i = 0; i < 8; i++) {
-    fragment.appendChild(getSingleMapPin(getSingleApartment(i)));
+  for (var i = 0; i < objects.length; i++) {
+    fragment.appendChild(getSingleMapPin(objects[i]));
   }
   mapPin.appendChild(fragment);
 };
-getAllMapPins();
 
-var card = document.querySelector('#card').content.querySelector('.map__card');
-var adCard = card.cloneNode(true);
-var editCard = function (searchClass, editText) {
-  adCard.querySelector(searchClass).textContent = editText;
-};
 var getCard = function (apartment) {
+  var newCard = cardTpl.cloneNode(true);
+
   editCard('.popup__title', apartment.offer.title);
   editCard('.popup__text--address', apartment.offer.adress);
   editCard('.popup__text--price', apartment.offer.price + ' ₽/ночь');
@@ -117,36 +112,54 @@ var getCard = function (apartment) {
   editCard('.popup__text--capacity', apartment.offer.rooms + ' комнаты для ' + apartment.offer.guests + ' гостей');
   editCard('.popup__text--time', 'Заезд после' + apartment.offer.checkin + ', выезд до ' + apartment.offer.checkout);
   editCard('.popup__description', apartment.offer.description);
-  adCard.querySelector('.popup__avatar').src = apartment.autor.avatar;
-  return adCard;
-};
-map.insertBefore(getCard(getSingleApartment(1)), zoneCard);
-var photosWrapper = document.querySelector('.popup__photos');
-function getImageToPopup(path) {
-  var img = photosWrapper.querySelector('img').cloneNode(true);
-  img.src = path;
-  return img;
-}
-var getPhotos = function (apartment) {
-  var firstImage = photosWrapper.querySelector('img');
-  apartment.offer.photos.forEach(function (el) {
-    photosWrapper.appendChild(getImageToPopup(el));
-  });
-  photosWrapper.removeChild(firstImage);
-};
-getPhotos(getSingleApartment(0));
+  newCard.querySelector('.popup__avatar').src = apartment.autor.avatar;
 
-var fragmentFeatures = document.createDocumentFragment(); 
-var featuresWrapper = document.querySelector('.popup__features');
-var getFeature = function () {
-  while (featuresWrapper.firstChild) {
-    featuresWrapper.removeChild(featuresWrapper.firstChild);
+  getPhotos(apartment.offer.photos);
+  getFeatures(apartment.offer.features);
+
+  return newCard;
+
+  function editCard(searchClass, editText) {
+    newCard.querySelector(searchClass).textContent = editText;
   }
-  for (var i = 0; i < getSingleApartment(0).offer.features.length; i++) {
-    var featuresElement = document.createElement('li');
-    featuresElement.classList.add('popup__feature', 'popup__feature--' +       getSingleApartment(0).offer.features[i]);
-    fragmentFeatures.appendChild(featuresElement);
+
+  function getPhotos(arr) {
+    var photosWrapper = newCard.querySelector('.popup__photos');
+    var firstImage = photosWrapper.querySelector('img');
+
+    arr.forEach(function (el) {
+      photosWrapper.appendChild(getImageToPopup(el));
+    });
+    photosWrapper.removeChild(firstImage);
+
+    function getImageToPopup(path) {
+      var img = photosWrapper.querySelector('img').cloneNode(true);
+      img.src = path;
+      return img;
+    }
   }
-  featuresWrapper.appendChild(fragmentFeatures);
+
+  function getFeatures(arr) {
+    var featuresWrapper = newCard.querySelector('.popup__features');
+    var fragmentFeatures = document.createDocumentFragment();
+
+    while (featuresWrapper.firstChild) {
+      featuresWrapper.removeChild(featuresWrapper.firstChild);
+    }
+
+    for (var i = 0; i < arr.length; i++) {
+      var featuresElement = document.createElement('li');
+      featuresElement.classList.add('popup__feature', 'popup__feature--' + arr[i]);
+      fragmentFeatures.appendChild(featuresElement);
+    }
+    featuresWrapper.appendChild(fragmentFeatures);
+  }
 };
-getFeature();
+for (var i = 0; i < OBJECTS_COUNT; i++) {
+  apartments.push(getSingleApartment(i));
+}
+getAllMapPins(apartments);
+
+map.appendChild(getCard(apartments[0]));
+
+map.classList.remove('map--faded');
