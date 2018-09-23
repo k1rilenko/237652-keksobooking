@@ -25,7 +25,6 @@ var mapPinMain = map.querySelector('.map__pin--main');
 var mapFilters = document.querySelector('.map__filters');
 var mapFilterChild = mapFilters.children;
 var form = document.querySelector('.ad-form');
-var formFieldset = form.querySelectorAll('fieldset');
 
 var mapsWidth = map.offsetWidth;
 var HEIGHT_DISABLE_MAIN_PIN = mapPinMain.offsetHeight / 2;
@@ -64,13 +63,11 @@ function toogleDisableForm(bool) {
   }
 }
 function toogleDisableFilters(bool) {
-  for (i = 0; i< mapFilterChild.length; i++) {
+  for (i = 0; i < mapFilterChild.length; i++) {
     mapFilterChild[i].disabled = bool;
-  };
+  }
 }
 
-
-//Handlers
 function activeFormHandler() {
   map.classList.remove('map--faded');
   form.classList.remove('ad-form--disabled');
@@ -130,11 +127,11 @@ function showApartPopup(apartItem) {
   map.appendChild(getCard(apartItem));
   var closePopupButton = document.querySelector('.popup__close');
   var mapCard = document.querySelector('.map__card');
-  closePopupButton.addEventListener('click', function() {
+  closePopupButton.addEventListener('click', function () {
     closePopup(mapCard);
   });
-  closePopupButton.addEventListener('keydown', function(evt) {
-    if (evt.keyCode === KEY_ESC ) {
+  closePopupButton.addEventListener('keydown', function (evt) {
+    if (evt.keyCode === KEY_ESC) {
       closePopup(mapCard);
     }
   });
@@ -145,20 +142,20 @@ function getSingleMapPin(apartItem) {
   pinElement.style = 'left:' + apartItem.location.x + 'px; top:' + apartItem.location.y + 'px;';
   pinElement.querySelector('img').src = apartItem.autor.avatar;
   pinElement.querySelector('img').alt = apartItem.offer.title;
-  pinElement.addEventListener('click', function() {
+  pinElement.addEventListener('click', function () {
     showApartPopup(apartItem);
-  })
+  });
   return pinElement;
-};
+}
 function getAllMapPins(objects) {
   var fragment = document.createDocumentFragment();
   for (var i = 0; i < objects.length; i++) {
     fragment.appendChild(getSingleMapPin(objects[i]));
   }
   mapPin.appendChild(fragment);
-};
+}
 
- function getCard(apartment) {
+function getCard(apartment) {
   var newCard = cardTpl.cloneNode(true);
 
   editCard('.popup__title', apartment.offer.title);
@@ -210,16 +207,16 @@ function getAllMapPins(objects) {
     }
     featuresWrapper.appendChild(fragmentFeatures);
   }
-};
+}
 
 function getStartLocate(heightPin) {
   var addressInput = form.querySelector('#address');
   addressInput.setAttribute('readonly', true);
   var locationMainPin = {
-  x: mapPinMain.offsetLeft + mapPinMain.offsetWidth / 2,
-  y: mapPinMain.offsetTop + heightPin
+    x: mapPinMain.offsetLeft + mapPinMain.offsetWidth / 2,
+    y: mapPinMain.offsetTop + heightPin
   };
-  addressInput.value = locationMainPin.x + ', ' + locationMainPin.y ;
+  addressInput.value = locationMainPin.x + ', ' + locationMainPin.y;
 }
 
 for (var i = 0; i < OBJECTS_COUNT; i++) {
@@ -231,6 +228,6 @@ toogleDisableForm(true);
 toogleDisableFilters(true);
 getStartLocate(HEIGHT_DISABLE_MAIN_PIN);
 
-mapPinMain.addEventListener('mouseup', function() {
-   activeFormHandler();
+mapPinMain.addEventListener('mouseup', function () {
+  activeFormHandler();
 });
