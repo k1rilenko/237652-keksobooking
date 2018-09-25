@@ -124,17 +124,23 @@ function closePopup(elem) {
 }
 
 function showApartPopup(apartItem) {
-  map.appendChild(getCard(apartItem));
-  var closePopupButton = document.querySelector('.popup__close');
-  var mapCard = document.querySelector('.map__card');
-  closePopupButton.addEventListener('click', function () {
-    closePopup(mapCard);
-  });
-  closePopupButton.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === KEY_ESC) {
+  var card = map.querySelector('.map__card');
+  var pinClickCard = getCard(apartItem);
+  if (map.querySelector('.map__card') !== null) {
+    map.removeChild(card);
+  } else {
+    map.appendChild(pinClickCard);
+    var closePopupButton = document.querySelector('.popup__close');
+    var mapCard = document.querySelector('.map__card');
+    closePopupButton.addEventListener('click', function () {
       closePopup(mapCard);
-    }
-  });
+    });
+    closePopupButton.addEventListener('keydown', function (evt) {
+      if (evt.keyCode === KEY_ESC) {
+        closePopup(mapCard);
+      }
+    });
+  }
 }
 
 function getSingleMapPin(apartItem) {
