@@ -87,7 +87,7 @@ var getTypeValue = function () {
     case 'house' :
       return 'Дом';
     default :
-      return 'Дом';
+      return 'Дворец';
   }
 };
 
@@ -125,22 +125,23 @@ function closePopup(elem) {
 
 function showApartPopup(apartItem) {
   var card = map.querySelector('.map__card');
-  var pinClickCard = getCard(apartItem);
-  if (map.querySelector('.map__card') !== null) {
+  var newCard = getCard(apartItem);
+  var closePopupButton = newCard.querySelector('.popup__close');
+
+  if (card) {
     map.removeChild(card);
-  } else {
-    map.appendChild(pinClickCard);
-    var closePopupButton = document.querySelector('.popup__close');
-    var mapCard = document.querySelector('.map__card');
-    closePopupButton.addEventListener('click', function () {
-      closePopup(mapCard);
-    });
-    closePopupButton.addEventListener('keydown', function (evt) {
-      if (evt.keyCode === KEY_ESC) {
-        closePopup(mapCard);
-      }
-    });
   }
+
+  closePopupButton.addEventListener('click', function () {
+    closePopup(newCard);
+  });
+  closePopupButton.addEventListener('keydown', function (evt) {
+    if (evt.keyCode === KEY_ESC) {
+      closePopup(newCard);
+    }
+  });
+
+  map.appendChild(newCard);
 }
 
 function getSingleMapPin(apartItem) {
