@@ -7,6 +7,10 @@ var MAX_ROOMS = 5;
 var MIN_GUESTS = 1;
 var MAX_GUESTS = 20;
 var OBJECTS_COUNT = 8;
+var PIN_HEIGHT = 70;
+var PIN_WIDTH = 50;
+var KEY_ESC = 27;
+
 
 var imageNumbers = ['1', '2', '3', '4', '5', '6', '7', '8'];
 var titles = ['Большая уютная квартира', 'Маленькая неуютная квартира', 'Огромный прекрасный дворец', 'Маленький ужасный дворец', 'Красивый гостевой домик', 'Некрасивый негостеприимный домик', 'Уютное бунгало далеко от моря', 'Неуютное бунгало по колено в воде'];
@@ -17,8 +21,14 @@ var photos = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.g
 
 var map = document.querySelector('.map');
 var mapPin = document.querySelector('.map__pins');
+var mapPinMain = map.querySelector('.map__pin--main');
+var mapFilters = document.querySelector('.map__filters');
+var mapFilterChild = mapFilters.children;
+var form = document.querySelector('.ad-form');
 
 var mapsWidth = map.offsetWidth;
+var HEIGHT_DISABLE_MAIN_PIN = mapPinMain.offsetHeight / 2;
+var HEIGHT_ACTIVE_MAIN_PIN = mapPinMain.offsetHeight + 15;
 
 var pinTpl = document.querySelector('#pin').content.querySelector('.map__pin');
 var cardTpl = document.querySelector('#card').content.querySelector('.map__card');
@@ -45,6 +55,28 @@ function shuffleArray(array) {
 var getFeatureValue = function () {
   return features.slice(getRandomInt(0, MAX_FEATURES_COUNT));
 };
+
+function toogleDisableForm(bool) {
+  var formFieldset = form.querySelectorAll('fieldset');
+  for (var i = 0; i < formFieldset.length; i++) {
+    formFieldset[i].disabled = bool;
+  }
+}
+function toogleDisableFilters(bool) {
+  for (i = 0; i < mapFilterChild.length; i++) {
+    mapFilterChild[i].disabled = bool;
+  }
+}
+
+function activeFormHandler() {
+  map.classList.remove('map--faded');
+  form.classList.remove('ad-form--disabled');
+  getAllMapPins(apartments);
+  toogleDisableForm(false);
+  toogleDisableFilters(false);
+  getStartLocate(HEIGHT_ACTIVE_MAIN_PIN);
+}
+
 var getTypeValue = function () {
   var typeValue = getRandomValue(types);
   switch (typeValue) {
@@ -55,7 +87,7 @@ var getTypeValue = function () {
     case 'house' :
       return 'Дом';
     default :
-      return 'Дом';
+      return 'Дворец';
   }
 };
 
@@ -81,28 +113,56 @@ var getSingleApartment = function (index) {
       photos: shuffleArray(photos)
     },
     location: {
-      x: posX,
-      y: posY
+      x: posX - PIN_WIDTH / 2,
+      y: posY - PIN_HEIGHT
     }
   };
 };
 
-var getSingleMapPin = function (apartItem) {
+function closePopup(elem) {
+  map.removeChild(elem);
+}
+
+function showApartPopup(apartItem) {
+  var card = map.querySelector('.map__card');
+  var newCard = getCard(apartItem);
+  var closePopupButton = newCard.querySelector('.popup__close');
+
+  if (card) {
+    map.removeChild(card);
+  }
+
+  closePopupButton.addEventListener('click', function () {
+    closePopup(newCard);
+  });
+  closePopupButton.addEventListener('keydown', function (evt) {
+    if (evt.keyCode === KEY_ESC) {
+      closePopup(newCard);
+    }
+  });
+
+  map.appendChild(newCard);
+}
+
+function getSingleMapPin(apartItem) {
   var pinElement = pinTpl.cloneNode(true);
   pinElement.style = 'left:' + apartItem.location.x + 'px; top:' + apartItem.location.y + 'px;';
   pinElement.querySelector('img').src = apartItem.autor.avatar;
   pinElement.querySelector('img').alt = apartItem.offer.title;
+  pinElement.addEventListener('click', function () {
+    showApartPopup(apartItem);
+  });
   return pinElement;
-};
-var getAllMapPins = function (objects) {
+}
+function getAllMapPins(objects) {
   var fragment = document.createDocumentFragment();
   for (var i = 0; i < objects.length; i++) {
     fragment.appendChild(getSingleMapPin(objects[i]));
   }
   mapPin.appendChild(fragment);
-};
+}
 
-var getCard = function (apartment) {
+function getCard(apartment) {
   var newCard = cardTpl.cloneNode(true);
 
   editCard('.popup__title', apartment.offer.title);
@@ -154,12 +214,27 @@ var getCard = function (apartment) {
     }
     featuresWrapper.appendChild(fragmentFeatures);
   }
-};
+}
+
+function getStartLocate(heightPin) {
+  var addressInput = form.querySelector('#address');
+  addressInput.setAttribute('readonly', true);
+  var locationMainPin = {
+    x: mapPinMain.offsetLeft + mapPinMain.offsetWidth / 2,
+    y: mapPinMain.offsetTop + heightPin
+  };
+  addressInput.value = locationMainPin.x + ', ' + locationMainPin.y;
+}
+
 for (var i = 0; i < OBJECTS_COUNT; i++) {
   apartments.push(getSingleApartment(i));
 }
-getAllMapPins(apartments);
 
-map.appendChild(getCard(apartments[0]));
 
-map.classList.remove('map--faded');
+toogleDisableForm(true);
+toogleDisableFilters(true);
+getStartLocate(HEIGHT_DISABLE_MAIN_PIN);
+
+mapPinMain.addEventListener('mouseup', function () {
+  activeFormHandler();
+});
