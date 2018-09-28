@@ -73,12 +73,6 @@ function toogleDisableFilters(bool) {
     mapFilterChild[i].disabled = bool;
   }
 }
-function startCapacitySelect() {
-  capacitySelect.options[2].selected = true;
-  capacitySelect.options[0].disabled = true;
-  capacitySelect.options[1].disabled = true;
-  capacitySelect.options[3].disabled = true;
-}
 
 function activeFormHandler() {
   map.classList.remove('map--faded');
@@ -87,7 +81,8 @@ function activeFormHandler() {
   toogleDisableForm(false);
   toogleDisableFilters(false);
   getStartLocate(HEIGHT_ACTIVE_MAIN_PIN);
-  startCapacitySelect();
+  changeTypeSelect();
+  numberOfGuestsHandler();
 }
 
 var getTypeValue = function () {
@@ -260,13 +255,13 @@ function getPlaceholderMinPrice(value) {
 }
 
 function changeTypeSelect() {
-  if (typeSelect.options[0].selected) {
+  if (typeSelect.value === 'bungalo') {
     getPlaceholderMinPrice('0');
-  } else if (typeSelect.options[1].selected) {
+  } else if (typeSelect.value === 'flat') {
     getPlaceholderMinPrice('1000');
-  } else if (typeSelect.options[2].selected) {
+  } else if (typeSelect.value === 'house') {
     getPlaceholderMinPrice('5000');
-  } else {
+  } else if (typeSelect.value === 'palace') {
     getPlaceholderMinPrice('10000');
   }
 }
@@ -275,10 +270,10 @@ typeSelect.addEventListener('change', function () {
 });
 
 function timeSelectChangeHandler(evt) {
-  var test1 = document.querySelector('#timein');
-  var test2 = document.querySelector('#timeout');
-  test1.value = evt.target.value;
-  test2.value = evt.target.value;
+  var timeInSelect = document.querySelector('#timein');
+  var timeOutSelect = document.querySelector('#timeout');
+  timeInSelect.value = evt.target.value;
+  timeOutSelect.value = evt.target.value;
 }
 timeForm.addEventListener('change', function (evt) {
   timeSelectChangeHandler(evt);
@@ -302,3 +297,4 @@ function numberOfGuestsHandler() {
   }
 }
 roomsSelect.addEventListener('change', numberOfGuestsHandler);
+
