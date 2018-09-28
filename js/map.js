@@ -25,6 +25,12 @@ var mapPinMain = map.querySelector('.map__pin--main');
 var mapFilters = document.querySelector('.map__filters');
 var mapFilterChild = mapFilters.children;
 var form = document.querySelector('.ad-form');
+var roomsSelect = form.querySelector('#room_number');
+var capacitySelect = form.querySelector('#capacity');
+var timeForm = document.querySelector('.ad-form__element--time');
+var typeSelect = form.querySelector('#type');
+var priceInput = form.querySelector('#price');
+
 
 var mapsWidth = map.offsetWidth;
 var HEIGHT_DISABLE_MAIN_PIN = mapPinMain.offsetHeight / 2;
@@ -63,9 +69,15 @@ function toogleDisableForm(bool) {
   }
 }
 function toogleDisableFilters(bool) {
-  for (i = 0; i < mapFilterChild.length; i++) {
+  for (var i = 0; i < mapFilterChild.length; i++) {
     mapFilterChild[i].disabled = bool;
   }
+}
+function startCapacitySelect() {
+  capacitySelect.options[2].selected = true;
+  capacitySelect.options[0].disabled = true;
+  capacitySelect.options[1].disabled = true;
+  capacitySelect.options[3].disabled = true;
 }
 
 function activeFormHandler() {
@@ -75,6 +87,7 @@ function activeFormHandler() {
   toogleDisableForm(false);
   toogleDisableFilters(false);
   getStartLocate(HEIGHT_ACTIVE_MAIN_PIN);
+  startCapacitySelect();
 }
 
 var getTypeValue = function () {
@@ -225,10 +238,12 @@ function getStartLocate(heightPin) {
   };
   addressInput.value = locationMainPin.x + ', ' + locationMainPin.y;
 }
-
-for (var i = 0; i < OBJECTS_COUNT; i++) {
-  apartments.push(getSingleApartment(i));
+function singleApartmentPush() {
+  for (var i = 0; i < OBJECTS_COUNT; i++) {
+    apartments.push(getSingleApartment(i));
+  }
 }
+singleApartmentPush();
 
 
 toogleDisableForm(true);
@@ -238,3 +253,52 @@ getStartLocate(HEIGHT_DISABLE_MAIN_PIN);
 mapPinMain.addEventListener('mouseup', function () {
   activeFormHandler();
 });
+
+function getPlaceholderMinPrice(value) {
+  priceInput.placeholder = value;
+  priceInput.min = value;
+}
+
+function changeTypeSelect() {
+  if (typeSelect.options[0].selected) {
+    getPlaceholderMinPrice('0');
+  } else if (typeSelect.options[1].selected) {
+    getPlaceholderMinPrice('1000');
+  } else if (typeSelect.options[2].selected) {
+    getPlaceholderMinPrice('5000');
+  } else {
+    getPlaceholderMinPrice('10000');
+  }
+}
+typeSelect.addEventListener('change', function () {
+  changeTypeSelect();
+});
+
+function timeSelectChangeHandler(evt) {
+  var test1 = document.querySelector('#timein');
+  var test2 = document.querySelector('#timeout');
+  test1.value = evt.target.value;
+  test2.value = evt.target.value;
+}
+timeForm.addEventListener('change', function (evt) {
+  timeSelectChangeHandler(evt);
+});
+
+var ROOMS_SYNC_CAPACITY = {
+  1: [1],
+  2: [1, 2],
+  3: [1, 2, 3],
+  100: [0]
+};
+
+function numberOfGuestsHandler() {
+  var syncArr = ROOMS_SYNC_CAPACITY[roomsSelect.value];
+  for (var i = 0; i < capacitySelect.options.length; i++) {
+    var option = capacitySelect.options[i];
+    option.disabled = (syncArr.indexOf(+option.value) === -1);
+  }
+  if (capacitySelect.querySelector('option[value="' + capacitySelect.value + '"]').disabled) {
+    capacitySelect.value = syncArr[syncArr.length - 1];
+  }
+}
+roomsSelect.addEventListener('change', numberOfGuestsHandler);
