@@ -249,24 +249,24 @@ mapPinMain.addEventListener('mouseup', function () {
   activeFormHandler();
 });
 
-function getPlaceholderMinPrice(value) {
+function setPlaceholderMinPrice(value) {
   priceInput.placeholder = value;
   priceInput.min = value;
 }
 
 function changeTypeSelect() {
-  if (typeSelect.value === 'bungalo') {
-    getPlaceholderMinPrice('0');
-  } else if (typeSelect.value === 'flat') {
-    getPlaceholderMinPrice('1000');
-  } else if (typeSelect.value === 'house') {
-    getPlaceholderMinPrice('5000');
-  } else if (typeSelect.value === 'palace') {
-    getPlaceholderMinPrice('10000');
+  var min = '0';
+  
+  switch(typeSelect.value) {
+    case 'flat': min = '1000'; break;
+    case 'house': min = '5000'; break;
+    case 'palace': min = '10000'; break;
+    default: min = '0';
   }
+  setPlaceholderMinPrice(min);
 }
 typeSelect.addEventListener('change', function () {
-  changeTypeSelect();
+  changeTypeSelect()
 });
 
 function timeSelectChangeHandler(evt) {
@@ -298,3 +298,49 @@ function numberOfGuestsHandler() {
 }
 roomsSelect.addEventListener('change', numberOfGuestsHandler);
 
+var mapLimits = {
+  top: map.offsetTop + 130,
+  right: map.offsetWidth + map.offsetLeft - mapPinMain.offsetWidth ,
+  bottom: map.offsetHeight - mapPinMain.offsetHeight,
+  left: map.offsetLeft + mapPinMain.offsetWidth
+} 
+
+mapPinMain.addEventListener('mousedown', function(evt) {
+  evt.preventDefault();
+  var startCoords = {
+    x: evt.clientX,
+    y: evt.clientY
+  };
+  var onMouseMove = function(moveEvt) {
+    moveEvt.preventDefault();
+    var shift = {
+      x: startCoords.x - moveEvt.clientX,
+      y: startCoords.y - moveEvt.clientY
+    };
+    startCoords = {
+      x: moveEvt.clientX,
+      y: moveEvt.clientY
+    };
+    if (startCoords.x > mapLimits.right) {
+      console.log('вышел за  правый' + mapLimits.right);
+    } else if (startCoords.x < mapLimits.left) {
+      //startCoords.x = mapLimits.left;
+      console.log('вышел за левый');
+    }
+    if (startCoords.y > mapLimits.bottom) {
+      console.log('вылез за низ');
+    } else if (startCoords.y < mapLimits.top) {
+      console.log('вылез за верх');
+    } 
+    mapPinMain.style.top = (mapPinMain.offsetTop - shift.y) + 'px';
+    mapPinMain.style.left = (mapPinMain.offsetLeft - shift.x) + 'px';
+  };
+  var onMouseUp = function (upEvt) {
+    upEvt.preventDefault();
+    
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
+  };
+  document.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('mouseup', onMouseUp);
+});
