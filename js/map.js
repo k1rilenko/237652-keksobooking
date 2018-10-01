@@ -10,6 +10,7 @@ var OBJECTS_COUNT = 8;
 var PIN_HEIGHT = 70;
 var PIN_WIDTH = 50;
 var KEY_ESC = 27;
+var HORIZON_LINE = 130;
 
 
 var imageNumbers = ['1', '2', '3', '4', '5', '6', '7', '8'];
@@ -101,7 +102,7 @@ var getTypeValue = function () {
 
 var getSingleApartment = function (index) {
   var posX = getRandomInt(0, mapsWidth);
-  var posY = getRandomInt(130, 630);
+  var posY = getRandomInt(HORIZON_LINE, 630);
   var randomFeatures = getFeatureValue();
   return {
     autor: {
@@ -256,8 +257,7 @@ function setPlaceholderMinPrice(value) {
 
 function changeTypeSelect() {
   var min = '0';
-  
-  switch(typeSelect.value) {
+  switch (typeSelect.value) {
     case 'flat': min = '1000'; break;
     case 'house': min = '5000'; break;
     case 'palace': min = '10000'; break;
@@ -266,7 +266,7 @@ function changeTypeSelect() {
   setPlaceholderMinPrice(min);
 }
 typeSelect.addEventListener('change', function () {
-  changeTypeSelect()
+  changeTypeSelect();
 });
 
 function timeSelectChangeHandler(evt) {
@@ -299,45 +299,43 @@ function numberOfGuestsHandler() {
 roomsSelect.addEventListener('change', numberOfGuestsHandler);
 
 var mapLimits = {
-  top: map.offsetTop + 130,
-  right: map.offsetWidth + map.offsetLeft - mapPinMain.offsetWidth ,
+  top: map.offsetTop + HORIZON_LINE,
+  right: map.offsetWidth + map.offsetLeft - mapPinMain.offsetWidth,
   bottom: map.offsetHeight - mapPinMain.offsetHeight,
   left: map.offsetLeft + mapPinMain.offsetWidth
-} 
+};
 
-mapPinMain.addEventListener('mousedown', function(evt) {
+mapPinMain.addEventListener('mousedown', function (evt) {
   evt.preventDefault();
   var startCoords = {
-    x: evt.clientX,
-    y: evt.clientY
+    x: evt.pageX,
+    y: evt.pageY
   };
-  var onMouseMove = function(moveEvt) {
+  var onMouseMove = function (moveEvt) {
     moveEvt.preventDefault();
     var shift = {
-      x: startCoords.x - moveEvt.clientX,
-      y: startCoords.y - moveEvt.clientY
+      x: startCoords.x - moveEvt.pageX,
+      y: startCoords.y - moveEvt.pageY
     };
     startCoords = {
-      x: moveEvt.clientX,
-      y: moveEvt.clientY
+      x: moveEvt.pageX,
+      y: moveEvt.pageY
     };
     if (startCoords.x > mapLimits.right) {
-      console.log('вышел за  правый' + mapLimits.right);
+      mapPinMain.style.left = (map.offsetWidth - mapPinMain.offsetWidth) + 'px';
     } else if (startCoords.x < mapLimits.left) {
-      //startCoords.x = mapLimits.left;
-      console.log('вышел за левый');
+      mapPinMain.style.left = 0 + 'px';
     }
     if (startCoords.y > mapLimits.bottom) {
-      console.log('вылез за низ');
+      mapPinMain.style.top = (map.offsetHeight - mapFilters.offsetHeight - HEIGHT_ACTIVE_MAIN_PIN) + 'px';
     } else if (startCoords.y < mapLimits.top) {
-      console.log('вылез за верх');
-    } 
+      mapPinMain.style.top = (map.offsetTop + HORIZON_LINE - mapPinMain.offsetHeight) + 'px';
+    }
     mapPinMain.style.top = (mapPinMain.offsetTop - shift.y) + 'px';
     mapPinMain.style.left = (mapPinMain.offsetLeft - shift.x) + 'px';
   };
   var onMouseUp = function (upEvt) {
     upEvt.preventDefault();
-    
     document.removeEventListener('mousemove', onMouseMove);
     document.removeEventListener('mouseup', onMouseUp);
   };
