@@ -74,6 +74,21 @@
   timeForm.addEventListener('change', function (evt) {
     timeSelectChangeHandler(evt);
   });
+  form.addEventListener('submit', function (evt){
+    window.backend.upload(new FormData(form), onLoad , onError);
+    evt.preventDefault();
+  });
+  function onLoad(data) {
+    console.log(data);
+  }
+  function onError(message) {
+    console.error(message);
+  }
+  function successFormHandler() {
+    var successMesageTpl = document.querySelector('#success').content.querySelector('.success');
+    var mainBlock = document.querySelector('main');
+    mainBlock.appendChild(successMesageTpl);
+  }
   window.formModule = {
     form: form,
     toogleDisableForm: toogleDisableForm,

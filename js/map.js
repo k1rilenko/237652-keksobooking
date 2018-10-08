@@ -7,18 +7,22 @@
   function activeFormHandler() {
     map.classList.remove('map--faded');
     window.formModule.form.classList.remove('ad-form--disabled');
-    window.pin.getAllMapPins(window.apartment.apartments);
+    window.backend.download(window.pin.getAllMapPins, onError);
     window.formModule.toogleDisableForm(false);
     window.formModule.toogleDisableFilters(false);
     window.formModule.getStartLocate(window.pin.HEIGHT_ACTIVE_MAIN_PIN);
     window.formModule.changeTypeSelect();
     window.formModule.numberOfGuestsHandler();
   }
+     function onError(message) {
+    console.error(message);
+  }
   window.mapModule = {
     map: map,
     mapPin: mapPin,
     mapPinMain: mapPinMain,
     activeFormHandler: activeFormHandler,
-    KEY_ESC: KEY_ESC
+    KEY_ESC: KEY_ESC,
+    onError: onError
   };
 })();

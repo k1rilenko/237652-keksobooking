@@ -8,7 +8,7 @@
   function getSingleMapPin(apartItem) {
     var pinElement = pinTpl.cloneNode(true);
     pinElement.style = 'left:' + apartItem.location.x + 'px; top:' + apartItem.location.y + 'px;';
-    pinElement.querySelector('img').src = apartItem.autor.avatar;
+    pinElement.querySelector('img').src = apartItem.author.avatar;
     pinElement.querySelector('img').alt = apartItem.offer.title;
     pinElement.addEventListener('click', function () {
       window.card.showApartPopup(apartItem);
