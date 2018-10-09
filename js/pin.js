@@ -65,10 +65,12 @@
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
   });
-  mapPinMain.addEventListener('mouseup', function () {
-    window.mapModule.activeFormHandler();
-  });
+  mapPinMain.addEventListener('mouseup', window.mapModule.activeFormHandler);
   window.formModule.getStartLocate(HEIGHT_DISABLE_MAIN_PIN);
+  
+  mapPinMain.addEventListener('mouseup', function (evt){
+    console.log(evt.pageX, evt.pageY);
+  });
   window.pin = {
     getAllMapPins: getAllMapPins,
     HEIGHT_DISABLE_MAIN_PIN: HEIGHT_DISABLE_MAIN_PIN,

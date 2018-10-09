@@ -74,21 +74,28 @@
   timeForm.addEventListener('change', function (evt) {
     timeSelectChangeHandler(evt);
   });
+  var mainBlock = document.querySelector('main');
+  var successMesageTpl = document.querySelector('#success').content.querySelector('.success');
   form.addEventListener('submit', function (evt){
-    window.backend.upload(new FormData(form), onLoad , onError);
+    window.backend.upload(new FormData(form), successFormHandler , onError);
     evt.preventDefault();
   });
-  function onLoad(data) {
-    console.log(data);
-  }
   function onError(message) {
     console.error(message);
   }
-  function successFormHandler() {
-    var successMesageTpl = document.querySelector('#success').content.querySelector('.success');
-    var mainBlock = document.querySelector('main');
-    mainBlock.appendChild(successMesageTpl);
+
+  function removeSuccessMessage(){
+    mainBlock.removeChild(successMesageTpl);
+    document.removeEventListener('click', removeSuccessMessage);
   }
+  
+  function successFormHandler() {
+    mainBlock.appendChild(successMesageTpl);
+    document.addEventListener('click', removeSuccessMessage);
+    form.reset();
+  }
+  
+  
   window.formModule = {
     form: form,
     toogleDisableForm: toogleDisableForm,
