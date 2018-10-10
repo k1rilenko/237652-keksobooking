@@ -22,12 +22,12 @@
     }
     window.mapModule.mapPin.appendChild(fragment);
   }
-  
-  function getDefaultPosition() {
-  var startposition = {
-    left: 'left: 570px;',
-    top:  'top: 375px'
-  };
+
+  function setDefaultPosition() {
+    var startposition = {
+      left: 'left: 570px;',
+      top: 'top: 375px'
+    };
     mapPinMain.style = startposition.left + startposition.top;
   }
   var mapLimits = {
@@ -74,12 +74,21 @@
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
   });
+
+  function deletePin() {
+    var allPins = map.querySelectorAll('[type="button"]');
+    for (var i = 0; i < allPins.length; i++) {
+      allPins[i].parentElement.removeChild(allPins[i]);
+    }
+  }
+
   mapPinMain.addEventListener('mouseup', window.mapModule.activeFormHandler);
-  window.formModule.getStartLocate(HEIGHT_DISABLE_MAIN_PIN);  
+  window.formModule.getStartLocate(HEIGHT_DISABLE_MAIN_PIN);
   window.pin = {
     getAllMapPins: getAllMapPins,
-    getDefaultPosition: getDefaultPosition,
+    setDefaultPosition: setDefaultPosition,
     HEIGHT_DISABLE_MAIN_PIN: HEIGHT_DISABLE_MAIN_PIN,
-    HEIGHT_ACTIVE_MAIN_PIN: HEIGHT_ACTIVE_MAIN_PIN
+    HEIGHT_ACTIVE_MAIN_PIN: HEIGHT_ACTIVE_MAIN_PIN,
+    deletePin: deletePin
   };
 })();

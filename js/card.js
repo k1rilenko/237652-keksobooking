@@ -1,7 +1,6 @@
 'use strict';
 (function () {
   var cardTpl = document.querySelector('#card').content.querySelector('.map__card');
-  
   function getCard(apartment) {
     var newCard = cardTpl.cloneNode(true);
     editCard('.popup__title', apartment.offer.title);

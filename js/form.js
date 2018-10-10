@@ -12,9 +12,8 @@
   var mainBlock = document.querySelector('main');
   var addressInput = form.querySelector('#address');
   var successMessageTpl = document.querySelector('#success').content.querySelector('.success');
-  var successMessage = successMessageTpl.cloneNode(true);
   var errorMessageTpl = document.querySelector('#error').content.querySelector('.error');
-  var errorMessage = errorMessageTpl.cloneNode(true);
+  var resetButton = form.querySelector('.ad-form__reset');
   function toogleDisableForm(bool) {
     var formFieldset = form.querySelectorAll('fieldset');
     for (var i = 0; i < formFieldset.length; i++) {
@@ -54,7 +53,7 @@
     timeInSelect.value = evt.target.value;
     timeOutSelect.value = evt.target.value;
   }
-  
+
   var ROOMS_SYNC_CAPACITY = {
     1: [1],
     2: [1, 2],
@@ -80,62 +79,53 @@
   timeForm.addEventListener('change', function (evt) {
     timeSelectChangeHandler(evt);
   });
-  
-  form.addEventListener('submit', function (evt){
+
+  form.addEventListener('submit', function (evt) {
     window.backend.upload(new FormData(form), successFormHandler, errorFormHandler);
     evt.preventDefault();
   });
-//  function onError(message) {
-//    console.error(message);
-//  }
-//  function removeMessage(domNode, removeBlock) {
-//    if (!document.querySelector(domNode)) {
-//      return;
-//    }
-//    mainBlock.removeChild(removeBlock);
-//    document.removeEventListener('click', removeMessage);
-//  }
-  function removeErrorMessage() {
-    if (!document.querySelector('.error')) {
-      return;
+  function removeMessage() {
+    var message = mainBlock.querySelector('.success') || mainBlock.querySelector('.error');
+    if (message) {
+      message.parentElement.removeChild(message);
     }
-    mainBlock.removeChild(errorMessage);
-    document.removeEventListener('click', removeErrorMessage);
+    document.removeEventListener('click', removeMessage);
   }
-  
   function errorFormHandler() {
-    var errorButton =  errorMessage.querySelector('.error__button');
+    var errorMessage = (errorMessageTpl.cloneNode(true));
+    var errorButton = errorMessage.querySelector('.error__button');
     mainBlock.appendChild(errorMessage);
-    document.addEventListener('click', removeErrorMessage);
+    document.addEventListener('click', removeMessage);
     document.addEventListener('keydown', function (evt) {
       if (evt.keyCode === window.mapModule.KEY_ESC) {
-        removeErrorMessage()
+        removeMessage();
       }
     });
-    errorButton.addEventListener('click', removeErrorMessage);
+    errorButton.addEventListener('click', removeMessage);
   }
-
-  function removeSuccessMessage() {
-    if (!document.querySelector('.success')) {
-      return;
-    }
-    mainBlock.removeChild(successMessage);
-    document.removeEventListener('click', removeSuccessMessage);
-  }
-  
   function successFormHandler() {
-    mainBlock.appendChild(successMessage);
-    document.addEventListener('click', removeSuccessMessage);
+    mainBlock.appendChild(successMessageTpl.cloneNode(true));
+    document.addEventListener('click', removeMessage);
     form.reset();
     window.formModule.getStartLocate(window.pin.HEIGHT_ACTIVE_MAIN_PIN);
-    window.pin.getDefaultPosition();
+    window.pin.setDefaultPosition();
     document.addEventListener('keydown', function (evt) {
       if (evt.keyCode === window.mapModule.KEY_ESC) {
-        removeSuccessMessage();
+        removeMessage();
       }
-    })
+    });
   }
-
+  function resetButtonHandler() {
+    form.reset();
+    window.pin.setDefaultPosition();
+    getStartLocate(window.pin.HEIGHT_ACTIVE_MAIN_PIN);
+    changeTypeSelect();
+    numberOfGuestsHandler();
+  }
+  resetButton.addEventListener('click', function (evt) {
+    evt.preventDefault();
+    resetButtonHandler();
+  });
   window.formModule = {
     form: form,
     toogleDisableForm: toogleDisableForm,
@@ -143,6 +133,7 @@
     numberOfGuestsHandler: numberOfGuestsHandler,
     getStartLocate: getStartLocate,
     changeTypeSelect: changeTypeSelect,
-    mapFilters: mapFilters
+    mapFilters: mapFilters,
+    errorFormHandler: errorFormHandler
   };
 })();
