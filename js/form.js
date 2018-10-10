@@ -9,6 +9,12 @@
   var priceInput = form.querySelector('#price');
   var mapFilters = document.querySelector('.map__filters');
   var mapFilterChild = mapFilters.children;
+  var mainBlock = document.querySelector('main');
+  var addressInput = form.querySelector('#address');
+  var successMessageTpl = document.querySelector('#success').content.querySelector('.success');
+  var successMessage = successMessageTpl.cloneNode(true);
+  var errorMessageTpl = document.querySelector('#error').content.querySelector('.error');
+  var errorMessage = errorMessageTpl.cloneNode(true);
   function toogleDisableForm(bool) {
     var formFieldset = form.querySelectorAll('fieldset');
     for (var i = 0; i < formFieldset.length; i++) {
@@ -35,7 +41,6 @@
     setPlaceholderMinPrice(min);
   }
   function getStartLocate(heightPin) {
-    var addressInput = form.querySelector('#address');
     addressInput.setAttribute('readonly', true);
     var locationMainPin = {
       x: window.mapModule.mapPinMain.offsetLeft + window.mapModule.mapPinMain.offsetWidth / 2,
@@ -49,6 +54,7 @@
     timeInSelect.value = evt.target.value;
     timeOutSelect.value = evt.target.value;
   }
+  
   var ROOMS_SYNC_CAPACITY = {
     1: [1],
     2: [1, 2],
@@ -74,28 +80,62 @@
   timeForm.addEventListener('change', function (evt) {
     timeSelectChangeHandler(evt);
   });
-  var mainBlock = document.querySelector('main');
-  var successMesageTpl = document.querySelector('#success').content.querySelector('.success');
+  
   form.addEventListener('submit', function (evt){
-    window.backend.upload(new FormData(form), successFormHandler , onError);
+    window.backend.upload(new FormData(form), successFormHandler, errorFormHandler);
     evt.preventDefault();
   });
-  function onError(message) {
-    console.error(message);
+//  function onError(message) {
+//    console.error(message);
+//  }
+//  function removeMessage(domNode, removeBlock) {
+//    if (!document.querySelector(domNode)) {
+//      return;
+//    }
+//    mainBlock.removeChild(removeBlock);
+//    document.removeEventListener('click', removeMessage);
+//  }
+  function removeErrorMessage() {
+    if (!document.querySelector('.error')) {
+      return;
+    }
+    mainBlock.removeChild(errorMessage);
+    document.removeEventListener('click', removeErrorMessage);
+  }
+  
+  function errorFormHandler() {
+    var errorButton =  errorMessage.querySelector('.error__button');
+    mainBlock.appendChild(errorMessage);
+    document.addEventListener('click', removeErrorMessage);
+    document.addEventListener('keydown', function (evt) {
+      if (evt.keyCode === window.mapModule.KEY_ESC) {
+        removeErrorMessage()
+      }
+    });
+    errorButton.addEventListener('click', removeErrorMessage);
   }
 
-  function removeSuccessMessage(){
-    mainBlock.removeChild(successMesageTpl);
+  function removeSuccessMessage() {
+    if (!document.querySelector('.success')) {
+      return;
+    }
+    mainBlock.removeChild(successMessage);
     document.removeEventListener('click', removeSuccessMessage);
   }
   
   function successFormHandler() {
-    mainBlock.appendChild(successMesageTpl);
+    mainBlock.appendChild(successMessage);
     document.addEventListener('click', removeSuccessMessage);
     form.reset();
+    window.formModule.getStartLocate(window.pin.HEIGHT_ACTIVE_MAIN_PIN);
+    window.pin.getDefaultPosition();
+    document.addEventListener('keydown', function (evt) {
+      if (evt.keyCode === window.mapModule.KEY_ESC) {
+        removeSuccessMessage();
+      }
+    })
   }
-  
-  
+
   window.formModule = {
     form: form,
     toogleDisableForm: toogleDisableForm,
