@@ -8,7 +8,7 @@
   function getSingleMapPin(apartItem) {
     var pinElement = pinTpl.cloneNode(true);
     pinElement.style = 'left:' + apartItem.location.x + 'px; top:' + apartItem.location.y + 'px;';
-    pinElement.querySelector('img').src = apartItem.autor.avatar;
+    pinElement.querySelector('img').src = apartItem.author.avatar;
     pinElement.querySelector('img').alt = apartItem.offer.title;
     pinElement.addEventListener('click', function () {
       window.card.showApartPopup(apartItem);
@@ -21,6 +21,14 @@
       fragment.appendChild(getSingleMapPin(objects[i]));
     }
     window.mapModule.mapPin.appendChild(fragment);
+  }
+
+  function setDefaultPosition() {
+    var startposition = {
+      left: 'left: 570px;',
+      top: 'top: 375px'
+    };
+    mapPinMain.style = startposition.left + startposition.top;
   }
   var mapLimits = {
     top: map.offsetTop + window.apartment.HORIZON_LINE,
@@ -56,6 +64,7 @@
       }
       mapPinMain.style.top = (mapPinMain.offsetTop - shift.y) + 'px';
       mapPinMain.style.left = (mapPinMain.offsetLeft - shift.x) + 'px';
+      window.formModule.getStartLocate(HEIGHT_ACTIVE_MAIN_PIN);
     };
     var onMouseUp = function (upEvt) {
       upEvt.preventDefault();
@@ -65,13 +74,21 @@
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
   });
-  mapPinMain.addEventListener('mouseup', function () {
-    window.mapModule.activeFormHandler();
-  });
+
+  function deletePin() {
+    var allPins = map.querySelectorAll('[type="button"]');
+    for (var i = 0; i < allPins.length; i++) {
+      allPins[i].parentElement.removeChild(allPins[i]);
+    }
+  }
+
+  mapPinMain.addEventListener('mouseup', window.mapModule.activeFormHandler);
   window.formModule.getStartLocate(HEIGHT_DISABLE_MAIN_PIN);
   window.pin = {
     getAllMapPins: getAllMapPins,
+    setDefaultPosition: setDefaultPosition,
     HEIGHT_DISABLE_MAIN_PIN: HEIGHT_DISABLE_MAIN_PIN,
-    HEIGHT_ACTIVE_MAIN_PIN: HEIGHT_ACTIVE_MAIN_PIN
+    HEIGHT_ACTIVE_MAIN_PIN: HEIGHT_ACTIVE_MAIN_PIN,
+    deletePin: deletePin
   };
 })();

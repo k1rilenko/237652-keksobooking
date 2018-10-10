@@ -4,13 +4,13 @@
   function getCard(apartment) {
     var newCard = cardTpl.cloneNode(true);
     editCard('.popup__title', apartment.offer.title);
-    editCard('.popup__text--address', apartment.offer.adress);
+    editCard('.popup__text--address', apartment.offer.address);
     editCard('.popup__text--price', apartment.offer.price + ' ₽/ночь');
-    editCard('.popup__type', apartment.offer.type);
+    editCard('.popup__type', window.apartment.getTypeValue(apartment.offer.type));
     editCard('.popup__text--capacity', apartment.offer.rooms + ' комнаты для ' + apartment.offer.guests + ' гостей');
     editCard('.popup__text--time', 'Заезд после' + apartment.offer.checkin + ', выезд до ' + apartment.offer.checkout);
     editCard('.popup__description', apartment.offer.description);
-    newCard.querySelector('.popup__avatar').src = apartment.autor.avatar;
+    newCard.querySelector('.popup__avatar').src = apartment.author.avatar;
     getPhotos(apartment.offer.photos);
     getFeatures(apartment.offer.features);
     return newCard;

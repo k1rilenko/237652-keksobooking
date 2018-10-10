@@ -7,10 +7,11 @@
   function activeFormHandler() {
     map.classList.remove('map--faded');
     window.formModule.form.classList.remove('ad-form--disabled');
-    window.pin.getAllMapPins(window.apartment.apartments);
+    window.backend.download(window.pin.getAllMapPins, window.formModule.errorFormHandler);
     window.formModule.toogleDisableForm(false);
     window.formModule.toogleDisableFilters(false);
     window.formModule.getStartLocate(window.pin.HEIGHT_ACTIVE_MAIN_PIN);
+    mapPinMain.removeEventListener('mouseup', window.mapModule.activeFormHandler);
     window.formModule.changeTypeSelect();
     window.formModule.numberOfGuestsHandler();
   }
