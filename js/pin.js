@@ -15,7 +15,9 @@
     });
     return pinElement;
   }
+  window.downloadApart = [];
   function getAllMapPins(objects) {
+    downloadApart = objects;
     var fragment = document.createDocumentFragment();
     for (var i = 0; i < objects.length; i++) {
       fragment.appendChild(getSingleMapPin(objects[i]));

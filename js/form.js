@@ -126,6 +126,7 @@
     evt.preventDefault();
     resetButtonHandler();
   });
+
   window.formModule = {
     form: form,
     toogleDisableForm: toogleDisableForm,
