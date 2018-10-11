@@ -1,22 +1,39 @@
 'use strict';
 (function () {
   var filterType = window.formModule.mapFilters.querySelector('#housing-type');
+  var filterPrice = window.formModule.mapFilters.querySelector('#housing-price');
 
-  function filterTypeValue () {
+  function filterTypeValue() {
+    console.log(window.downloadApart);
     var filterValue = filterType.value;
-    var apartType = window.downloadApart.filter(function (type) {
-    return type.offer.type === filterValue;
+    var apartParam = window.downloadApart.filter(function (el) {
+    return el.offer.type === filterValue;
   });
     window.pin.deletePin();
-    console.log(apartType);
-    window.pin.getAllMapPins(apartType);
+    console.log(apartParam);
+    window.pin.getAllMapPins(apartParam);
   }
 
+  function filterPriceValue() {
+    var filterValue = filterPrice.value;
+    var apartParam = window.downloadApart.filter(function (el) {
+      switch(filterValue) {
+        case 'low': return el.offer.price <  10000; break;
+        case 'middle': return el.offer.price >= 10000 && el.offer.price < 50000; break;
+        case 'high': return el.offer.price >= 50000; break;
+        default: return el.offer.price;
+      }
+  });
+      console.log(apartParam);
+  };
+
 filterType.addEventListener('change', filterTypeValue);
+filterPrice.addEventListener('change', filterPriceValue);
 
 
-  window.filter = {
+  window.filterModule = {
     filterType: filterType,
-    filterTypeValue: filterTypeValue
+    filterTypeValue: filterTypeValue,
+    filterPriceValue: filterPriceValue
   };
 })();
