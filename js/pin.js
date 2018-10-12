@@ -25,6 +25,11 @@
     window.mapModule.mapPin.appendChild(fragment);
   }
 
+  function initMapPins(data) {
+    window.mapModule.mapObjects = data;
+    getAllMapPins(data);
+  }
+
   function setDefaultPosition() {
     var startposition = {
       left: 'left: 570px;',
@@ -91,6 +96,7 @@
     setDefaultPosition: setDefaultPosition,
     HEIGHT_DISABLE_MAIN_PIN: HEIGHT_DISABLE_MAIN_PIN,
     HEIGHT_ACTIVE_MAIN_PIN: HEIGHT_ACTIVE_MAIN_PIN,
-    deletePin: deletePin
+    deletePin: deletePin,
+    initMapPins: initMapPins
   };
 })();
