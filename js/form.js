@@ -1,6 +1,12 @@
 'use strict';
 
 (function () {
+  var ROOMS_SYNC_CAPACITY = {
+    1: [1],
+    2: [1, 2],
+    3: [1, 2, 3],
+    100: [0]
+  };
   var form = document.querySelector('.ad-form');
   var roomsSelect = form.querySelector('#room_number');
   var capacitySelect = form.querySelector('#capacity');
@@ -45,7 +51,7 @@
       x: window.mapModule.mapPinMain.offsetLeft + window.mapModule.mapPinMain.offsetWidth / 2,
       y: window.mapModule.mapPinMain.offsetTop + heightPin
     };
-    addressInput.value = locationMainPin.x + ', ' + locationMainPin.y;
+    addressInput.value = locationMainPin.x +  ', ' + locationMainPin.y;
   }
   function timeSelectChangeHandler(evt) {
     var timeInSelect = document.querySelector('#timein');
@@ -53,13 +59,6 @@
     timeInSelect.value = evt.target.value;
     timeOutSelect.value = evt.target.value;
   }
-
-  var ROOMS_SYNC_CAPACITY = {
-    1: [1],
-    2: [1, 2],
-    3: [1, 2, 3],
-    100: [0]
-  };
   function numberOfGuestsHandler() {
     var syncArr = ROOMS_SYNC_CAPACITY[roomsSelect.value];
     for (var i = 0; i < capacitySelect.options.length; i++) {
@@ -107,8 +106,10 @@
     mainBlock.appendChild(successMessageTpl.cloneNode(true));
     document.addEventListener('click', removeMessage);
     form.reset();
-    window.formModule.getStartLocate(window.pin.HEIGHT_ACTIVE_MAIN_PIN);
     window.pin.setDefaultPosition();
+    getStartLocate(window.pin.HEIGHT_ACTIVE_MAIN_PIN);
+    window.formModule.changeTypeSelect();
+    window.formModule.numberOfGuestsHandler();
     document.addEventListener('keydown', function (evt) {
       if (evt.keyCode === window.mapModule.KEY_ESC) {
         removeMessage();

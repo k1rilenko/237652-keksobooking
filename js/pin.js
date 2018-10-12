@@ -1,10 +1,11 @@
 'use strict';
 (function () {
+  var HEIGHT_DISABLE_MAIN_PIN = mapPinMain.offsetHeight / 2;
+  var HEIGHT_ACTIVE_MAIN_PIN = mapPinMain.offsetHeight + 15;
+  var MAX_SHOW_PIN = 5;
   var pinTpl = document.querySelector('#pin').content.querySelector('.map__pin');
   var map = document.querySelector('.map');
   var mapPinMain = map.querySelector('.map__pin--main');
-  var HEIGHT_DISABLE_MAIN_PIN = mapPinMain.offsetHeight / 2;
-  var HEIGHT_ACTIVE_MAIN_PIN = mapPinMain.offsetHeight + 15;
   function getSingleMapPin(apartItem) {
     var pinElement = pinTpl.cloneNode(true);
     pinElement.style = 'left:' + apartItem.location.x + 'px; top:' + apartItem.location.y + 'px;';
@@ -15,11 +16,9 @@
     });
     return pinElement;
   }
-  window.downloadApart = [];
   function getAllMapPins(objects) {
-    downloadApart = objects;
     var fragment = document.createDocumentFragment();
-    for (var i = 0; i < objects.length; i++) {
+    for (var i = 0; i < Math.min(objects.length, MAX_SHOW_PIN); i++) {
       fragment.appendChild(getSingleMapPin(objects[i]));
     }
     window.mapModule.mapPin.appendChild(fragment);

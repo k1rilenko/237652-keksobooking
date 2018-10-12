@@ -71,6 +71,7 @@
   }
   window.card = {
     getCard: getCard,
-    showApartPopup: showApartPopup
+    closePopup: closePopup,
+    showApartPopup: showApartPopup,
   };
 })();
