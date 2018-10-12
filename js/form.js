@@ -51,7 +51,7 @@
       x: window.mapModule.mapPinMain.offsetLeft + window.mapModule.mapPinMain.offsetWidth / 2,
       y: window.mapModule.mapPinMain.offsetTop + heightPin
     };
-    addressInput.value = locationMainPin.x +  ', ' + locationMainPin.y;
+    addressInput.value = locationMainPin.x + ', ' + locationMainPin.y;
   }
   function timeSelectChangeHandler(evt) {
     var timeInSelect = document.querySelector('#timein');
