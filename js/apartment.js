@@ -4,14 +4,10 @@
   function getTypeValue(el) {
     var typeValue = el;
     switch (typeValue) {
-      case 'flat' :
-        return 'Квартира';
-      case 'bungalo' :
-        return 'Бунгало';
-      case 'house' :
-        return 'Дом';
-      default :
-        return 'Дворец';
+      case 'flat': return 'Квартира';
+      case 'bungalo': return 'Бунгало';
+      case 'house': return 'Дом';
+      default: return 'Дворец';
     }
   }
   window.apartment = {
