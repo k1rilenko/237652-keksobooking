@@ -11,7 +11,7 @@
     window.backend.download(window.pin.initMapPins, window.formModule.errorFormHandler);
     window.formModule.toogleDisableForm(false);
     window.formModule.toogleDisableFilters(false);
-    window.formModule.getStartLocate(window.pin.HEIGHT_ACTIVE_MAIN_PIN);
+    window.formModule.getStartLocate(window.pin.heightActiveMainPin);
     mapPinMain.removeEventListener('mouseup', window.mapModule.activeFormHandler);
     window.formModule.changeTypeSelect();
     window.formModule.numberOfGuestsHandler();

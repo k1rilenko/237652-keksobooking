@@ -1,5 +1,9 @@
 'use strict';
 (function () {
+  var URL_POST = 'https://js.dump.academy/keksobooking';
+  var URL_GET = 'https://js.dump.academy/keksobooking/data';
+  var TIMEOUT = 10000;
+
   function download(onLoad, onError) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
@@ -16,12 +20,11 @@
     xhr.addEventListener('timeout', function () {
       onError('Превышено время соединения c сервером. Сервер не ответил за ' + xhr.timeout + ' мс');
     });
-    xhr.timeout = 10000;
-    xhr.open('GET', 'https://js.dump.academy/keksobooking/data');
+    xhr.timeout = TIMEOUT;
+    xhr.open('GET', URL_GET);
     xhr.send();
   }
   function upload(data, onLoad, onError) {
-    var URL = 'https://js.dump.academy/keksobooking';
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
     xhr.addEventListener('load', function () {
@@ -37,8 +40,8 @@
     xhr.addEventListener('timeout', function () {
       onError('Превышено время соединения c сервером. Сервер не ответил за ' + xhr.timeout + ' мс');
     });
-    xhr.timeout = 10000;
-    xhr.open('POST', URL);
+    xhr.timeout = TIMEOUT;
+    xhr.open('POST', URL_POST);
     xhr.send(data);
   }
   window.backend = {

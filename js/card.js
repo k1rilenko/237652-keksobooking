@@ -17,11 +17,11 @@
     function editCard(searchClass, editText) {
       newCard.querySelector(searchClass).textContent = editText;
     }
-    function getPhotos(arr) {
+    function getPhotos(array) {
       var photosWrapper = newCard.querySelector('.popup__photos');
       var firstImage = photosWrapper.querySelector('img');
-      arr.forEach(function (el) {
-        photosWrapper.appendChild(getImageToPopup(el));
+      array.forEach(function (element) {
+        photosWrapper.appendChild(getImageToPopup(element));
       });
       photosWrapper.removeChild(firstImage);
 
@@ -31,24 +31,36 @@
         return img;
       }
     }
-    function getFeatures(arr) {
+    function getFeatures(array) {
       var featuresWrapper = newCard.querySelector('.popup__features');
       var fragmentFeatures = document.createDocumentFragment();
       while (featuresWrapper.firstChild) {
         featuresWrapper.removeChild(featuresWrapper.firstChild);
       }
-      for (var i = 0; i < arr.length; i++) {
+      for (var i = 0; i < array.length; i++) {
         var featuresElement = document.createElement('li');
-        featuresElement.classList.add('popup__feature', 'popup__feature--' + arr[i]);
+        featuresElement.classList.add('popup__feature', 'popup__feature--' + array[i]);
         fragmentFeatures.appendChild(featuresElement);
       }
       featuresWrapper.appendChild(fragmentFeatures);
     }
   }
 
-  function closePopup(elem) {
-    window.mapModule.map.removeChild(elem);
+  function closePopup(element) {
+    if (element) {
+      window.mapModule.map.removeChild(element);
+    } else {
+      return;
+    }
   }
+
+  function popupCloseEscHandler(evt) {
+    if (evt.keyCode === window.mapModule.KEY_ESC) {
+      closePopup(document.querySelector('.map__card'));
+    }
+    document.removeEventListener('keydown', popupCloseEscHandler);
+  }
+
   function showApartPopup(apartItem) {
     var card = document.querySelector('.map__card');
     var newCard = window.card.getCard(apartItem);
@@ -57,7 +69,6 @@
     if (card) {
       window.mapModule.map.removeChild(card);
     }
-
     closePopupButton.addEventListener('click', function () {
       closePopup(newCard);
     });
@@ -66,6 +77,7 @@
         closePopup(newCard);
       }
     });
+    document.addEventListener('keydown', popupCloseEscHandler);
 
     window.mapModule.map.appendChild(newCard);
   }

@@ -1,11 +1,10 @@
 'use strict';
 (function () {
-  var f = window.formModule.mapFilters;
-  var filterType = f.querySelector('#housing-type');
-  var filterPrice = f.querySelector('#housing-price');
-  var filterRoom = f.querySelector('#housing-rooms');
-  var filterGuest = f.querySelector('#housing-guests');
-
+  var filter = window.formModule.mapFilters;
+  var filterType = filter.querySelector('#housing-type');
+  var filterPrice = filter.querySelector('#housing-price');
+  var filterRoom = filter.querySelector('#housing-rooms');
+  var filterGuest = filter.querySelector('#housing-guests');
   var filterObj = {};
   function getFilterValues() {
     filterObj.type = filterType.value;
@@ -26,16 +25,19 @@
   }
 
   function filterObjects() {
-    return window.mapModule.mapObjects.filter(function (obj) {
-      return syncType(obj) && syncRooms(obj) && syncPrice(obj) && syncGuest(obj) && checkFeatures(filterObj.features, obj.offer.features);
+    return window.mapModule.mapObjects.filter(function (object) {
+      return syncType(object) && syncRooms(object) && syncPrice(object) && syncGuest(object) && checkFeatures(filterObj.features, object.offer.features);
     });
   }
 
-  f.addEventListener('change', function () {
-    getFilterValues();
-    window.pin.deletePin();
-    window.pin.getAllMapPins(filterObjects());
-  });
+  function closeCard() {
+    var card = document.querySelector('.map__card');
+    if (card) {
+      window.card.closePopup(card);
+    } else {
+      return;
+    }
+  }
 
   function syncType(data) {
     switch (filterObj.type) {
@@ -76,11 +78,25 @@
 
   function checkFeatures(filterFeatures, apartFeatures) {
     var result = true;
-    filterFeatures.forEach(function (obj) {
-      result = result && (findInArray(apartFeatures, obj) > -1);
+    filterFeatures.forEach(function (object) {
+      result = result && (findInArray(apartFeatures, object) > -1);
     });
     return result;
   }
+
+  var lastTimeout;
+  filter.addEventListener('change', function () {
+    getFilterValues();
+    window.pin.deletePin();
+    closeCard();
+    if (lastTimeout) {
+      window.clearTimeout(lastTimeout);
+    }
+    lastTimeout = window.setTimeout(function () {
+      window.pin.getAllMapPins(filterObjects());
+    }, 500);
+
+  });
 
   window.filterModule = {
     filterType: filterType,
@@ -91,6 +107,7 @@
     syncGuest: syncGuest,
     syncType: syncType,
     checkFeatures: checkFeatures,
-    findInArray: findInArray
+    findInArray: findInArray,
+    closeCard: closeCard
   };
 })();
