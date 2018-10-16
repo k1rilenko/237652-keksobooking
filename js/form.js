@@ -1,5 +1,4 @@
 'use strict';
-
 (function () {
   var ROOMS_SYNC_CAPACITY = {
     1: [1],
@@ -17,8 +16,8 @@
   var mapFilterChildren = mapFilters.children;
   var mainBlock = document.querySelector('main');
   var addressInput = form.querySelector('#address');
-  var successMessageTpl = document.querySelector('#success').content.querySelector('.success');
-  var errorMessageTpl = document.querySelector('#error').content.querySelector('.error');
+  var successMessageTemplate = document.querySelector('#success').content.querySelector('.success');
+  var errorMessageTemplate = document.querySelector('#error').content.querySelector('.error');
   var resetButton = form.querySelector('.ad-form__reset');
   function toogleDisableForm(bool) {
     var formFieldset = form.querySelectorAll('fieldset');
@@ -92,7 +91,7 @@
     document.removeEventListener('click', removeMessage);
   }
   function errorFormHandler() {
-    var errorMessage = (errorMessageTpl.cloneNode(true));
+    var errorMessage = (errorMessageTemplate.cloneNode(true));
     var errorButton = errorMessage.querySelector('.error__button');
     mainBlock.appendChild(errorMessage);
     document.addEventListener('click', removeMessage);
@@ -104,52 +103,30 @@
     errorButton.addEventListener('click', removeMessage);
   }
   function successFormHandler() {
-    mainBlock.appendChild(successMessageTpl.cloneNode(true));
+    mainBlock.appendChild(successMessageTemplate.cloneNode(true));
     document.addEventListener('click', removeMessage);
-    form.reset();
-    mapFilters.reset();
-    window.pin.setDefaultPosition();
-    getStartLocate(window.pin.heightActiveMainPin);
-    window.formModule.changeTypeSelect();
-    window.formModule.numberOfGuestsHandler();
-    window.pin.deletePin();
-    window.filterModule.closeCard();
+    window.mapModule.disableApplication();
     document.addEventListener('keydown', function (evt) {
       if (evt.keyCode === window.mapModule.KEY_ESC) {
         removeMessage();
       }
     });
-    window.mapModule.mapPinMain.addEventListener('click', repeatGetAllMapPin);
-  }
-
-  function repeatGetAllMapPin() {
-    window.pin.getAllMapPins(window.mapModule.mapObjects);
   }
   function resetButtonHandler() {
-    form.reset();
-    mapFilters.reset();
-    window.pin.setDefaultPosition();
-    getStartLocate(window.pin.heightActiveMainPin);
-    changeTypeSelect();
-    numberOfGuestsHandler();
-    window.pin.deletePin();
-    window.filterModule.closeCard();
-    window.mapModule.mapPinMain.addEventListener('click', repeatGetAllMapPin);
+    window.mapModule.disableApplication();
   }
   resetButton.addEventListener('click', function (evt) {
     evt.preventDefault();
     resetButtonHandler();
   });
-
   window.formModule = {
     form: form,
+    mapFilters: mapFilters,
     toogleDisableForm: toogleDisableForm,
     toogleDisableFilters: toogleDisableFilters,
     numberOfGuestsHandler: numberOfGuestsHandler,
     getStartLocate: getStartLocate,
     changeTypeSelect: changeTypeSelect,
-    mapFilters: mapFilters,
-    errorFormHandler: errorFormHandler,
-    repeatGetAllMapPin: repeatGetAllMapPin
+    errorFormHandler: errorFormHandler
   };
 })();

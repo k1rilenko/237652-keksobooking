@@ -1,12 +1,12 @@
 'use strict';
 (function () {
-  var cardTpl = document.querySelector('#card').content.querySelector('.map__card');
+  var cardTemplate = document.querySelector('#card').content.querySelector('.map__card');
   function getCard(apartment) {
-    var newCard = cardTpl.cloneNode(true);
+    var newCard = cardTemplate.cloneNode(true);
     editCard('.popup__title', apartment.offer.title);
     editCard('.popup__text--address', apartment.offer.address);
     editCard('.popup__text--price', apartment.offer.price + ' ₽/ночь');
-    editCard('.popup__type', window.apartment.getTypeValue(apartment.offer.type));
+    editCard('.popup__type', getTypeValue(apartment.offer.type));
     editCard('.popup__text--capacity', apartment.offer.rooms + ' комнаты для ' + apartment.offer.guests + ' гостей');
     editCard('.popup__text--time', 'Заезд после' + apartment.offer.checkin + ', выезд до ' + apartment.offer.checkout);
     editCard('.popup__description', apartment.offer.description);
@@ -14,6 +14,18 @@
     getPhotos(apartment.offer.photos);
     getFeatures(apartment.offer.features);
     return newCard;
+
+    function getTypeValue(element) {
+      var typeValue = element;
+      switch (typeValue) {
+        case 'flat': return 'Квартира';
+        case 'bungalo': return 'Бунгало';
+        case 'house': return 'Дом';
+        default: return 'Дворец';
+      }
+    }
+
+
     function editCard(searchClass, editText) {
       newCard.querySelector(searchClass).textContent = editText;
     }

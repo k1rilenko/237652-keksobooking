@@ -2,14 +2,23 @@
 (function () {
 
   var MAX_SHOW_PIN = 5;
-  var pinTpl = document.querySelector('#pin').content.querySelector('.map__pin');
+  var MAP_LIMIT = {
+    top: 130,
+    bottom: 630
+  };
+  var START_POSITION = {
+    left: 'left: 570px;',
+    top: 'top: 375px'
+  };
+
+  var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
   var map = document.querySelector('.map');
   var mapPinMain = map.querySelector('.map__pin--main');
   var heightDisableMainPin = mapPinMain.offsetHeight / 2;
-  var heightActiveMainPin = mapPinMain.offsetHeight + 15;
+  var heightActiveMainPin = mapPinMain.offsetHeight + 14;
 
   function getSingleMapPin(apartItem) {
-    var pinElement = pinTpl.cloneNode(true);
+    var pinElement = pinTemplate.cloneNode(true);
     pinElement.style = 'left:' + apartItem.location.x + 'px; top:' + apartItem.location.y + 'px;';
     pinElement.querySelector('img').src = apartItem.author.avatar;
     pinElement.querySelector('img').alt = apartItem.offer.title;
@@ -33,16 +42,12 @@
   }
 
   function setDefaultPosition() {
-    var startposition = {
-      left: 'left: 570px;',
-      top: 'top: 375px'
-    };
-    mapPinMain.style = startposition.left + startposition.top;
+    mapPinMain.style = START_POSITION.left + START_POSITION.top;
   }
   var mapLimits = {
-    top: map.offsetTop + window.apartment.HORIZON_LINE,
+    top: MAP_LIMIT.top - heightActiveMainPin,
     right: map.offsetWidth + map.offsetLeft - mapPinMain.offsetWidth,
-    bottom: 630,
+    bottom: MAP_LIMIT.bottom - heightActiveMainPin,
     left: map.offsetLeft + mapPinMain.offsetWidth
   };
   mapPinMain.addEventListener('mousedown', function (evt) {

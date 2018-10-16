@@ -2,7 +2,7 @@
 (function () {
   var KEY_ESC = 27;
   var map = document.querySelector('.map');
-  var mapPin = document.querySelector('.map__pins');
+  var mapPin = map.querySelector('.map__pins');
   var mapPinMain = map.querySelector('.map__pin--main');
   var mapObjects = [];
   function activeFormHandler() {
@@ -16,6 +16,21 @@
     window.formModule.changeTypeSelect();
     window.formModule.numberOfGuestsHandler();
   }
+  function disableApplication() {
+    map.classList.add('map--faded');
+    window.formModule.form.classList.add('ad-form--disabled');
+    window.formModule.toogleDisableFilters(true);
+    window.formModule.toogleDisableForm(true);
+    window.formModule.form.reset();
+    window.formModule.mapFilters.reset();
+    window.pin.setDefaultPosition();
+    window.formModule.changeTypeSelect();
+    window.formModule.numberOfGuestsHandler();
+    window.pin.deletePin();
+    window.filterModule.closeCard();
+    window.formModule.getStartLocate(window.pin.heightDisableMainPin);
+    window.mapModule.mapPinMain.addEventListener('click', window.mapModule.activeFormHandler);
+  }
 
   window.mapModule = {
     map: map,
@@ -23,6 +38,7 @@
     mapPinMain: mapPinMain,
     activeFormHandler: activeFormHandler,
     KEY_ESC: KEY_ESC,
-    mapObjects: mapObjects
+    mapObjects: mapObjects,
+    disableApplication: disableApplication
   };
 })();
