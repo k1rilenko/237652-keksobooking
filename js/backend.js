@@ -3,12 +3,13 @@
   var URL_POST = 'https://js.dump.academy/keksobooking';
   var URL_GET = 'https://js.dump.academy/keksobooking/data';
   var TIMEOUT = 10000;
+  var STATUS_OK = 200;
 
   function download(onLoad, onError) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
     xhr.addEventListener('load', function () {
-      if (xhr.status === 200) {
+      if (xhr.status === STATUS_OK) {
         onLoad(xhr.response);
       } else {
         onError('статус ответа: ' + xhr.status + '' + xhr.statusText);
@@ -28,7 +29,7 @@
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
     xhr.addEventListener('load', function () {
-      if (xhr.status === 200) {
+      if (xhr.status === STATUS_OK) {
         onLoad(xhr.response);
       } else {
         onError('статус ответа: ' + xhr.status + '' + xhr.statusText);

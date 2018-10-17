@@ -5,28 +5,28 @@
   var filterPrice = filter.querySelector('#housing-price');
   var filterRoom = filter.querySelector('#housing-rooms');
   var filterGuest = filter.querySelector('#housing-guests');
-  var filterObj = {};
+  var filterObject = {};
   function getFilterValues() {
-    filterObj.type = filterType.value;
-    filterObj.price = filterPrice.value;
-    filterObj.rooms = filterRoom.value;
-    filterObj.guests = filterGuest.value;
-    filterObj.features = getFeaturesArr();
-    function getFeaturesArr() {
-      var featuresArr = [];
+    filterObject.type = filterType.value;
+    filterObject.price = filterPrice.value;
+    filterObject.rooms = filterRoom.value;
+    filterObject.guests = filterGuest.value;
+    filterObject.features = gerFeaturesArray();
+    function gerFeaturesArray() {
+      var featuresArray = [];
       var featuresList = document.querySelectorAll('.map__checkbox');
       for (var i = 0; i < featuresList.length; i++) {
         if (featuresList[i].checked) {
-          featuresArr.push(featuresList[i].value);
+          featuresArray.push(featuresList[i].value);
         }
       }
-      return featuresArr;
+      return featuresArray;
     }
   }
 
   function filterObjects() {
     return window.mapModule.mapObjects.filter(function (object) {
-      return syncType(object) && syncRooms(object) && syncPrice(object) && syncGuest(object) && checkFeatures(filterObj.features, object.offer.features);
+      return syncType(object) && syncRooms(object) && syncPrice(object) && syncGuest(object) && checkFeatures(filterObject.features, object.offer.features);
     });
   }
 
@@ -40,7 +40,7 @@
   }
 
   function syncType(data) {
-    switch (filterObj.type) {
+    switch (filterObject.type) {
       case 'palace': return data.offer.type === 'palace';
       case 'flat': return data.offer.type === 'flat';
       case 'house': return data.offer.type === 'house';
@@ -49,7 +49,7 @@
     }
   }
   function syncPrice(data) {
-    switch (filterObj.price) {
+    switch (filterObject.price) {
       case 'low': return data.offer.price < 10000;
       case 'middle': return data.offer.price >= 10000 && data.offer.price < 50000;
       case 'high': return data.offer.price >= 50000;
@@ -57,7 +57,7 @@
     }
   }
   function syncGuest(data) {
-    switch (filterObj.guests) {
+    switch (filterObject.guests) {
       case '1': return data.offer.guests === 1;
       case '2': return data.offer.guests === 2;
       case '0': return data.offer.guests === 0;
@@ -65,7 +65,7 @@
     }
   }
   function syncRooms(data) {
-    switch (filterObj.rooms) {
+    switch (filterObject.rooms) {
       case '1': return data.offer.rooms === 1;
       case '2': return data.offer.rooms === 2;
       case '3': return data.offer.rooms === 3;
@@ -95,19 +95,8 @@
     lastTimeout = window.setTimeout(function () {
       window.pin.getAllMapPins(filterObjects());
     }, 500);
-
   });
-
   window.filterModule = {
-    filterType: filterType,
-    getFilterValues: getFilterValues,
-    filterObjects: filterObjects,
-    filterObj: filterObj,
-    syncPrice: syncPrice,
-    syncGuest: syncGuest,
-    syncType: syncType,
-    checkFeatures: checkFeatures,
-    findInArray: findInArray,
     closeCard: closeCard
   };
 })();
